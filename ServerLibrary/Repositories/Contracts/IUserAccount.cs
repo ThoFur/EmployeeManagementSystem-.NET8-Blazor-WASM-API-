@@ -8,5 +8,6 @@ namespace ServerLibrary.Repositories.Contracts
     {
         Task<GeneralResponse> CreateAsync(Register User);
         Task<LoginResponse> SignInAsync(Login user);
+        Task<LoginResponse> RefreshTokenAsync(RefreshToken token);
     }
 }
