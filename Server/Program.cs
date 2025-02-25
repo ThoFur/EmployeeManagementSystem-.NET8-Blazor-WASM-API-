@@ -6,17 +6,14 @@ using ServerLibrary.Repositories.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//starting
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ??
+    options.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeManagement") ??
         throw new InvalidOperationException("Sorry, your connection failed"));
 });
 
@@ -25,7 +22,7 @@ builder.Services.Configure<JwtSection>(builder.Configuration.GetSection("JwtSect
 builder.Services.AddScoped<IUserAccount, UserAccountRepository>();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
