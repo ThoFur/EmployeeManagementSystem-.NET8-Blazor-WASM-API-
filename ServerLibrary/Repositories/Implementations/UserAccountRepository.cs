@@ -78,7 +78,18 @@ namespace ServerLibrary.Repositories.Implementations
 
             string jwtToken = GenerateToken(applicationUser, getRoleName!.Name!);
             string refreshToken = GenerateRefreshToken();
-            return new LoginResponse(true, "Login successfull", jwtToken, refreshToken);
+
+            var findUser = await appDbContext.RefreshTokenInfos.FirstOrDefaultAsync(_ => _.UserId == applicationUser.Id);
+            if (findUser is not null)
+            {
+                findUser!.Token = refreshToken;
+                await appDbContext.SaveChangesAsync();
+            }
+            else
+            {
+                await AddToDatabase(new RefreshTokenInfo() { Token = refreshToken, UserId = applicationUser.Id });
+            }
+                return new LoginResponse(true, "Login successfull", jwtToken, refreshToken);
         }
 
         private static string GenerateRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
@@ -138,6 +149,8 @@ namespace ServerLibrary.Repositories.Implementations
 
             updateRefreshToken.Token = refreshToken;
             await appDbContext.SaveChangesAsync();
+
+
             return new LoginResponse(true, "Token refreshed succesfully", jwtToken, refreshToken);
             
         }
